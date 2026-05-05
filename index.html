@@ -60,45 +60,6 @@ a { color:var(--primary); }
 .screen { display:none; min-height:100dvh; flex-direction:column; }
 .screen.active { display:flex; }
 
-/* ===== SETUP SCREEN ===== */
-#setup {
-  align-items:center; justify-content:center;
-  padding:var(--sp6) var(--sp4); overflow-y:auto;
-  background: radial-gradient(ellipse 60% 40% at 50% -10%, rgba(79,157,168,.18) 0%, transparent 70%),
-              var(--bg);
-}
-.setup-card {
-  width:100%; max-width:440px;
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-xl); padding:var(--sp8);
-  display:flex; flex-direction:column; gap:var(--sp5);
-}
-.logo-row { display:flex; align-items:center; gap:var(--sp3); }
-.logo-icon {
-  width:44px; height:44px; border-radius:var(--r-lg);
-  background:linear-gradient(135deg,var(--primary) 0%,#2a8290 100%);
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-.logo-name { font-size:20px; font-weight:700; line-height:1.1; }
-.logo-sub  { font-size:12px; color:var(--muted); }
-
-.field { display:flex; flex-direction:column; gap:var(--sp2); }
-.field label { font-size:var(--tx-xs); color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.05em; }
-.field input {
-  padding:12px var(--sp4); background:var(--surf2); border:1px solid var(--border);
-  border-radius:var(--r-md); color:var(--text); font-size:var(--tx-sm);
-  font-family:var(--font); outline:none; transition:border-color var(--ease);
-}
-.field input:focus { border-color:var(--primary); }
-.field .hint { font-size:12px; color:var(--muted); line-height:1.5; }
-
-.info-box {
-  padding:var(--sp4); background:rgba(79,157,168,.07);
-  border:1px solid rgba(79,157,168,.2); border-radius:var(--r-md);
-  font-size:13px; color:var(--muted); line-height:1.7;
-}
-.info-box strong { color:var(--primary); }
-
 /* ===== CONNECT SCREEN ===== */
 #connect {
   align-items:center; justify-content:center;
@@ -297,8 +258,6 @@ a { color:var(--primary); }
 .qr-card p  { font-size:13px; color:var(--muted); line-height:1.5; }
 #qr-canvas  { border-radius:var(--r-md); background:#fff; padding:10px; }
 .qr-url     { font-size:11px; color:var(--faint); word-break:break-all; }
-
-/* ===== SPINNER ===== */
 .spinner {
   width:18px; height:18px; border:2px solid rgba(255,255,255,.3);
   border-top-color:#fff; border-radius:50%;
@@ -312,73 +271,9 @@ a { color:var(--primary); }
 <div class="flash" id="flash"></div>
 
 <!-- ══════════════════════════════════════════
-     ЭКРАН 1: НАСТРОЙКА (для разработчика)
+     ЭКРАН: ПОДКЛЮЧЕНИЕ GOOGLE DRIVE
 ══════════════════════════════════════════ -->
-<div class="screen active" id="setup">
-  <div class="setup-card">
-
-    <div class="logo-row">
-      <div class="logo-icon">
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-          <circle cx="13" cy="13" r="7" stroke="white" stroke-width="2" fill="none"/>
-          <circle cx="13" cy="13" r="3.5" fill="white"/>
-          <rect x="8" y="7" width="5" height="3" rx="1.5" fill="white"/>
-        </svg>
-      </div>
-      <div>
-        <div class="logo-name">PhotoDrive</div>
-        <div class="logo-sub">Настройка приложения</div>
-      </div>
-    </div>
-
-    <div>
-      <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;">Введите Google Client ID</h2>
-      <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-        Нужен для OAuth-авторизации пользователей через Google. Получается один раз в Google Cloud Console.
-      </p>
-    </div>
-
-    <div class="field">
-      <label>Google OAuth 2.0 Client ID</label>
-      <input id="inp-cid" type="text" placeholder="123456789.apps.googleusercontent.com" autocomplete="off" spellcheck="false">
-      <span class="hint">
-        Тип: <strong>Web application</strong>. Добавьте ваш домен в <em>Authorized JavaScript origins</em>.
-      </span>
-    </div>
-
-    <div class="field">
-      <label>Название папки на Google Drive</label>
-      <input id="inp-folder" type="text" value="PhotoDrive" placeholder="PhotoDrive">
-      <span class="hint">Папка создаётся автоматически в аккаунте каждого пользователя.</span>
-    </div>
-
-    <div class="field">
-      <label>Заголовок для гостей (необязательно)</label>
-      <input id="inp-title" type="text" placeholder="Свадьба Ани и Максима" value="">
-    </div>
-
-    <button class="btn btn-primary btn-full" id="btn-save" onclick="saveSetup()">
-      Сохранить и продолжить →
-    </button>
-
-    <div class="info-box">
-      <strong>📋 Как получить Client ID:</strong><br>
-      1. <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a> → Credentials<br>
-      2. Включить <strong>Google Drive API</strong><br>
-      3. Create Credentials → OAuth 2.0 Client ID<br>
-      4. Тип: <strong>Web application</strong><br>
-      5. Добавить домен приложения в Authorized origins<br>
-      6. Скопировать Client ID сюда
-    </div>
-
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════════════
-     ЭКРАН 2: ПОДКЛЮЧЕНИЕ GOOGLE DRIVE
-══════════════════════════════════════════ -->
-<div class="screen" id="connect">
+<div class="screen active" id="connect">
   <div class="connect-card">
 
     <div class="connect-icon">
@@ -393,7 +288,7 @@ a { color:var(--primary); }
     <div style="text-align:center;">
       <h1 id="connect-title" style="font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px;">PhotoDrive</h1>
       <p style="font-size:15px;color:var(--muted);line-height:1.6;">
-        Фотографируйте — каждое фото<br>автоматически сохраняется на Google Диск
+        Общая папка в Google Drive<br>Снимайте — файлы прилетят сразу туда
       </p>
     </div>
 
@@ -405,8 +300,8 @@ a { color:var(--primary); }
           </svg>
         </div>
         <div>
-          <div class="perm-name">Папка на Google Drive</div>
-          <div class="perm-desc">Создаётся один раз в вашем аккаунте</div>
+          <div class="perm-name">Общая папка</div>
+          <div class="perm-desc">Все гости сохраняют туда же</div>
         </div>
       </div>
       <div class="perm-item">
@@ -416,7 +311,7 @@ a { color:var(--primary); }
           </svg>
         </div>
         <div>
-          <div class="perm-name">Загрузка фото</div>
+          <div class="perm-name">Загрузка фото и видео</div>
           <div class="perm-desc">Автоматически после каждого снимка</div>
         </div>
       </div>
@@ -428,7 +323,7 @@ a { color:var(--primary); }
         </div>
         <div>
           <div class="perm-name">Только созданные файлы</div>
-          <div class="perm-desc">Scope drive.file — без доступа к остальному</div>
+          <div class="perm-desc">Ваш Drive не читается, только запись</div>
         </div>
       </div>
     </div>
@@ -440,32 +335,31 @@ a { color:var(--primary); }
       Подключить Google Диск
     </button>
 
-    <button class="btn btn-ghost" onclick="goSetup()" style="font-size:13px;padding:8px 16px;">
-      ← Изменить настройки
+    <button class="btn btn-ghost btn-full" onclick="openFolder()" style="font-size:13px;padding:10px 16px;">
+      Открыть общую папку на Google Drive
     </button>
 
   </div>
 </div>
 
-
 <!-- ══════════════════════════════════════════
-     ЭКРАН 3: КАМЕРА
+     ЭКРАН: КАМЕРА
 ══════════════════════════════════════════ -->
 <div class="screen" id="camera">
   <video id="video" autoplay playsinline muted></video>
-  <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none">
+  <input type="file" id="file-input" accept="image/*,video/*" capture="environment" style="display:none">
 
-  <!-- Camera fallback (shown if getUserMedia fails) -->
+  <!-- Fallback -->
   <div class="cam-fallback" id="cam-fallback" style="display:none;">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5">
       <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
       <circle cx="12" cy="13" r="4"/>
     </svg>
     <p style="color:var(--muted);font-size:15px;text-align:center;line-height:1.6;">
-      Прямой доступ к камере недоступен.<br>Используйте кнопку ниже.
+      Прямой доступ к камере недоступен.<br>Нажмите кнопку, чтобы выбрать фото/видео.
     </p>
     <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
-      📷 Сделать фото
+      📷 Загрузить файл
     </button>
   </div>
 
@@ -477,7 +371,7 @@ a { color:var(--primary); }
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       </div>
-      Google Диск
+      Общая папка Drive
     </div>
     <div class="cam-actions">
       <button class="btn-ic" onclick="showQR()" title="QR-код">
@@ -504,7 +398,6 @@ a { color:var(--primary); }
   <!-- Bottom controls -->
   <div class="cam-bottom">
     <div class="cam-controls">
-      <!-- Thumbnail / gallery -->
       <button class="thumb-btn" id="thumb-btn" onclick="openGallery()" aria-label="Галерея">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
@@ -512,29 +405,24 @@ a { color:var(--primary); }
         </svg>
       </button>
 
-      <!-- Shutter -->
       <button class="shutter" onclick="shoot()" id="shutter" aria-label="Сделать фото">
         <div class="shutter-inner"></div>
       </button>
 
-      <!-- Counter -->
       <div class="photo-counter">
         <div class="counter-num" id="counter-num">0</div>
-        <div class="counter-lbl">фото</div>
+        <div class="counter-lbl">фото/видео</div>
       </div>
     </div>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════
-     ГАЛЕРЕЯ
-══════════════════════════════════════════ -->
+<!-- ГАЛЕРЕЯ -->
 <div id="gallery">
   <div class="gal-header">
     <div>
       <div class="gal-title" id="gal-title">Галерея</div>
-      <div class="gal-sub" id="gal-sub">0 фото</div>
+      <div class="gal-sub" id="gal-sub">0 файлов</div>
     </div>
     <button class="btn-ic" onclick="closeGallery()">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -542,305 +430,4 @@ a { color:var(--primary); }
       </svg>
     </button>
   </div>
-  <div class="gal-grid" id="gal-grid"></div>
-</div>
-
-
-<!-- ══════════════════════════════════════════
-     QR МОДАЛКА
-══════════════════════════════════════════ -->
-<div id="qr-modal">
-  <div class="qr-card">
-    <h3>QR-код приложения</h3>
-    <p>Покажите гостям — пусть тоже снимают и сохраняют на свой Drive</p>
-    <canvas id="qr-canvas"></canvas>
-    <div class="qr-url" id="qr-url"></div>
-    <button class="btn btn-ghost btn-full" onclick="closeQR()">Закрыть</button>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
-<script>
-// ── State ──
-let S = {
-  clientId: '',
-  folderName: 'PhotoDrive',
-  eventTitle: '',
-  token: null,
-  tokenClient: null,
-  folderId: null,
-  photos: [],
-  stream: null,
-  facing: 'environment',
-  useFileInput: false,
-};
-
-// ── Screen routing ──
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// ── Setup screen ──
-function saveSetup() {
-  // ХАРДКОДИМ Client ID
-  S.clientId   = '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com';
-  S.folderName = 'PhotoDrive';   // можно поменять имя папки на Drive
-  S.eventTitle = '';             // или, например, 'Свадьба Ани и Максима';
-
-  const title = S.eventTitle || 'PhotoDrive';
-  document.getElementById('connect-title').textContent = title;
-  show('connect');
-}
-
-window.addEventListener('load', () => {
-  saveSetup();  // сразу переходим к экрану подключения Google Диска
-});
-
-function goSetup() { show('setup'); }
-
-// ── Google OAuth ──
-function connectDrive() {
-  const btn = document.getElementById('btn-connect');
-  if (!window.google) {
-    alert('Библиотека Google не загрузилась. Проверьте соединение.');
-    return;
-  }
-  btn.innerHTML = '<div class="spinner"></div> Подключение...';
-  btn.classList.add('btn-loading');
-
-  S.tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: S.clientId,
-    scope: 'https://www.googleapis.com/auth/drive.file',
-    callback: async (resp) => {
-      btn.classList.remove('btn-loading');
-      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> Подключить Google Диск';
-      if (resp.error) { alert('Ошибка: ' + resp.error); return; }
-      S.token = resp.access_token;
-      try {
-        S.folderId = await ensureFolder(S.folderName);
-        await startCamera();
-        show('camera');
-      } catch(e) {
-        alert('Ошибка подключения: ' + e.message);
-      }
-    }
-  });
-  S.tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-// Refresh token silently when needed
-function refreshToken() {
-  return new Promise((res, rej) => {
-    if (!S.tokenClient) return rej(new Error('No token client'));
-    const original = S.tokenClient.callback;
-    S.tokenClient.callback = (resp) => {
-      S.tokenClient.callback = original;
-      if (resp.error) return rej(new Error(resp.error));
-      S.token = resp.access_token;
-      res(resp.access_token);
-    };
-    S.tokenClient.requestAccessToken({ prompt: '' });
-  });
-}
-
-// ── Google Drive API ──
-async function ensureFolder(name) {
-  const q = encodeURIComponent(`name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
-  const r = await apiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
-  if (r.files && r.files.length > 0) return r.files[0].id;
-
-  const created = await apiFetch('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder' })
-  });
-  return created.id;
-}
-
-async function uploadPhoto(blob, filename) {
-  const meta = { name: filename, parents: [S.folderId] };
-  const form = new FormData();
-  form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
-  form.append('file', blob, filename);
-  return apiFetch(
-    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
-    { method: 'POST', body: form }
-  );
-}
-
-async function apiFetch(url, opts = {}) {
-  const headers = { Authorization: `Bearer ${S.token}`, ...(opts.headers || {}) };
-  let r = await fetch(url, { ...opts, headers });
-  if (r.status === 401) {
-    await refreshToken();
-    headers.Authorization = `Bearer ${S.token}`;
-    r = await fetch(url, { ...opts, headers });
-  }
-  if (!r.ok) throw new Error(`API error ${r.status}`);
-  return r.json();
-}
-
-// ── Camera ──
-async function startCamera() {
-  const video = document.getElementById('video');
-  try {
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: S.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-      audio: false
-    });
-    video.srcObject = S.stream;
-  } catch (e) {
-    console.warn('getUserMedia failed, fallback to file input:', e);
-    S.useFileInput = true;
-    video.style.display = 'none';
-    document.getElementById('cam-fallback').style.display = 'flex';
-    document.getElementById('shutter').style.display = 'none';
-    document.getElementById('btn-flip').style.display = 'none';
-    document.getElementById('file-input').addEventListener('change', onFileSelected);
-  }
-}
-
-async function flipCamera() {
-  S.facing = S.facing === 'environment' ? 'user' : 'environment';
-  if (S.stream) S.stream.getTracks().forEach(t => t.stop());
-  const video = document.getElementById('video');
-  try {
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: S.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-      audio: false
-    });
-    video.srcObject = S.stream;
-  } catch(e) { console.error(e); }
-}
-
-function shoot() {
-  const video = document.getElementById('video');
-  if (!video.videoWidth) return;
-
-  // Flash
-  const flash = document.getElementById('flash');
-  flash.classList.add('go');
-  setTimeout(() => flash.classList.remove('go'), 250);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  canvas.toBlob(blob => processCapture(blob), 'image/jpeg', 0.88);
-}
-
-function onFileSelected(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  processCapture(file);
-  e.target.value = '';
-}
-
-// ── Photo processing ──
-async function processCapture(blob) {
-  const idx = S.photos.length;
-  const dataUrl = await blobToDataUrl(blob);
-  S.photos.push({ dataUrl, status: 'uploading' });
-
-  updateCounter();
-  updateThumb(dataUrl);
-  addGalleryItem(idx);
-  setToast('uploading', 'Загрузка на Drive...');
-
-  const filename = `photo_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
-  try {
-    const result = await uploadPhoto(blob, filename);
-    S.photos[idx].status = 'done';
-    S.photos[idx].driveId = result.id;
-    updateGalleryBadge(idx, 'done');
-    setToast('done', '✓ Сохранено на Drive');
-    setTimeout(hideToast, 2800);
-  } catch(e) {
-    S.photos[idx].status = 'error';
-    updateGalleryBadge(idx, 'error');
-    setToast('error', 'Ошибка загрузки');
-    setTimeout(hideToast, 3500);
-  }
-}
-
-function blobToDataUrl(blob) {
-  return new Promise(res => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result);
-    r.readAsDataURL(blob);
-  });
-}
-
-// ── UI helpers ──
-function updateCounter() {
-  document.getElementById('counter-num').textContent = S.photos.length;
-}
-
-function updateThumb(dataUrl) {
-  const btn = document.getElementById('thumb-btn');
-  btn.innerHTML = `<img src="${dataUrl}" alt="последнее фото">`;
-}
-
-function setToast(state, text) {
-  const toast = document.getElementById('toast');
-  const dot   = document.getElementById('toast-dot');
-  document.getElementById('toast-text').textContent = text;
-  dot.className = 'toast-dot ' + state;
-  toast.classList.remove('hidden');
-}
-function hideToast() {
-  document.getElementById('toast').classList.add('hidden');
-}
-
-function addGalleryItem(idx) {
-  const grid = document.getElementById('gal-grid');
-  const item = document.createElement('div');
-  item.className = 'gal-item';
-  item.id = `gi-${idx}`;
-  item.innerHTML = `
-    <img src="${S.photos[idx].dataUrl}" alt="фото ${idx+1}" loading="lazy">
-    <div class="gal-badge uploading" id="gb-${idx}">
-      <div class="spinner" style="width:10px;height:10px;border-width:1.5px;"></div>
-    </div>`;
-  grid.prepend(item);
-  document.getElementById('gal-sub').textContent = S.photos.length + ' фото';
-  document.getElementById('gal-title').textContent = S.folderName || 'Галерея';
-}
-
-function updateGalleryBadge(idx, state) {
-  const badge = document.getElementById(`gb-${idx}`);
-  if (!badge) return;
-  badge.className = 'gal-badge ' + state;
-  if (state === 'done') {
-    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`;
-  } else {
-    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-  }
-}
-
-function openGallery()  { document.getElementById('gallery').classList.add('open'); }
-function closeGallery() { document.getElementById('gallery').classList.remove('open'); }
-
-// ── QR ──
-function showQR() {
-  const modal = document.getElementById('qr-modal');
-  modal.classList.add('open');
-  const url = window.location.href.split('#')[0];
-  document.getElementById('qr-url').textContent = url;
-  QRCode.toCanvas(document.getElementById('qr-canvas'), url, {
-    width: 200,
-    color: { dark: '#000', light: '#fff' },
-    errorCorrectionLevel: 'H'
-  }, err => { if (err) console.error(err); });
-}
-function closeQR() { document.getElementById('qr-modal').classList.remove('open'); }
-document.getElementById('qr-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('qr-modal')) closeQR();
-});
-</script>
-</body>
-</html>
+  <
