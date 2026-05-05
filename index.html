@@ -16,7 +16,6 @@
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
 
 <style>
-/* ===== DESIGN TOKENS ===== */
 :root {
   --bg:       #0c0d10;
   --surface:  #141519;
@@ -26,11 +25,10 @@
   --text:     #ecedf0;
   --muted:    #8b8d99;
   --faint:    #50525e;
-  --primary:  #4f9da8;
-  --primary-h:#3b8791;
+  --primary:  #8b5cf6;   /* фиолетовый */
+  --primary-h: #7c3aed;   /* фиолетовый при hover */
   --success:  #5fa83c;
   --error:    #c94f8a;
-  --warn:     #d97706;
 
   --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 20px; --r-full: 9999px;
   --sp1:4px;--sp2:8px;--sp3:12px;--sp4:16px;--sp5:20px;--sp6:24px;--sp8:32px;
@@ -56,11 +54,10 @@ button { cursor:pointer; background:none; border:none; font:inherit; color:inher
 button:active { transform:scale(.97); }
 a { color:var(--primary); }
 
-/* ===== SCREENS ===== */
 .screen { display:none; min-height:100dvh; flex-direction:column; }
 .screen.active { display:flex; }
 
-/* ===== CONNECT SCREEN ===== */
+/* CONNECT */
 #connect {
   align-items:center; justify-content:center;
   padding:var(--sp8) var(--sp6); gap:var(--sp6);
@@ -93,7 +90,6 @@ a { color:var(--primary); }
 .perm-name { font-weight:600; font-size:13px; }
 .perm-desc { font-size:12px; color:var(--muted); }
 
-/* ===== BUTTONS ===== */
 .btn {
   display:inline-flex; align-items:center; justify-content:center; gap:var(--sp2);
   padding:14px var(--sp6); border-radius:var(--r-full);
@@ -104,15 +100,13 @@ a { color:var(--primary); }
 .btn-primary:hover { background:var(--primary-h); }
 .btn-ghost { background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--border); }
 .btn-ghost:hover { background:rgba(255,255,255,.1); }
-.btn:active { transform:scale(.96); }
 .btn-full { width:100%; }
 .btn-loading { opacity:.6; pointer-events:none; }
 
-/* ===== CAMERA SCREEN ===== */
+/* CAMERA */
 #camera { position:relative; background:#000; }
 #video { width:100%; height:100dvh; object-fit:cover; display:block; }
 
-/* Top bar */
 .cam-top {
   position:absolute; top:0; left:0; right:0;
   padding:16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
@@ -132,7 +126,6 @@ a { color:var(--primary); }
 }
 .cam-actions { display:flex; gap:var(--sp2); }
 
-/* Bottom controls */
 .cam-bottom {
   position:absolute; bottom:0; left:0; right:0; z-index:10;
   padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
@@ -143,11 +136,10 @@ a { color:var(--primary); }
   background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 100%);
 }
 
-/* Shutter button */
 .shutter {
   width:76px; height:76px; border-radius:50%;
   background:rgba(255,255,255,.15); border:3px solid rgba(255,255,255,.5);
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center;
   transition:transform var(--ease), box-shadow var(--ease);
   flex-shrink:0;
 }
@@ -158,22 +150,18 @@ a { color:var(--primary); }
 .shutter:active .shutter-inner { transform:scale(.88); }
 .shutter:active { box-shadow:0 0 0 4px rgba(255,255,255,.2); }
 
-/* Thumbnail */
 .thumb-btn {
   width:54px; height:54px; border-radius:var(--r-md); overflow:hidden;
   background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.18);
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center;
   flex-shrink:0;
 }
 .thumb-btn img { width:100%; height:100%; object-fit:cover; }
-.thumb-btn svg { color:rgba(255,255,255,.5); }
 
-/* Counter */
 .photo-counter { text-align:center; }
-.counter-num { font-size:22px; font-weight:700; line-height:1; color:#fff; }
+.counter-num { font-size:22px; font-weight:700; color:#fff; }
 .counter-lbl { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
 
-/* Upload toast */
 .upload-toast {
   position:absolute; top:calc(env(safe-area-inset-top,0px) + 72px);
   left:50%; transform:translateX(-50%);
@@ -191,17 +179,14 @@ a { color:var(--primary); }
 .toast-dot.error     { background:var(--error); }
 @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
 
-/* Btn icon */
 .btn-ic {
   width:40px; height:40px; border-radius:50%;
   background:rgba(0,0,0,.45); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.14); color:#fff;
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; transition:all var(--ease);
 }
 .btn-ic:active { transform:scale(.9); }
 
-/* Camera fallback */
 .cam-fallback {
   position:absolute; inset:0;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -209,12 +194,11 @@ a { color:var(--primary); }
   background:var(--bg);
 }
 
-/* Flash */
 .flash { position:fixed; inset:0; background:#fff; z-index:999; pointer-events:none; opacity:0; }
 .flash.go { animation:flash-go .2s ease-out forwards; }
 @keyframes flash-go { 0%{opacity:.9} 100%{opacity:0} }
 
-/* ===== GALLERY OVERLAY ===== */
+/* Gallery */
 #gallery {
   position:fixed; inset:0; background:rgba(0,0,0,.94); z-index:100;
   display:none; flex-direction:column;
@@ -242,7 +226,7 @@ a { color:var(--primary); }
 .gal-badge.done  { background:rgba(95,168,60,.85); }
 .gal-badge.error { background:rgba(201,79,138,.85); }
 
-/* ===== QR MODAL ===== */
+/* QR modal */
 #qr-modal {
   position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:200;
   display:none; align-items:center; justify-content:center; padding:var(--sp4);
@@ -264,18 +248,17 @@ a { color:var(--primary); }
   animation:spin .7s linear infinite;
 }
 @keyframes spin { to { transform:rotate(360deg) } }
+@keyframes flash-go { 0%{opacity:.9}100%{opacity:0} }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
 </style>
 </head>
 <body>
 
 <div class="flash" id="flash"></div>
 
-<!-- ══════════════════════════════════════════
-     ЭКРАН: ПОДКЛЮЧЕНИЕ GOOGLE DRIVE
-══════════════════════════════════════════ -->
+<!-- CONNECT -->
 <div class="screen active" id="connect">
   <div class="connect-card">
-
     <div class="connect-icon">
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
         <circle cx="22" cy="20" r="10" stroke="white" stroke-width="2.5" fill="none"/>
@@ -286,9 +269,9 @@ a { color:var(--primary); }
     </div>
 
     <div style="text-align:center;">
-      <h1 id="connect-title" style="font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px;">PhotoDrive</h1>
+      <h1 style="font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px;">PhotoDrive</h1>
       <p style="font-size:15px;color:var(--muted);line-height:1.6;">
-        Общая папка в Google Drive<br>Снимайте — файлы прилетят сразу туда
+        Общая папка в Google Drive<br>Снимайте – файлы прилетят сразу туда
       </p>
     </div>
 
@@ -329,7 +312,7 @@ a { color:var(--primary); }
     </div>
 
     <button class="btn btn-primary btn-full" id="btn-connect" onclick="connectDrive()" style="padding:16px;font-size:16px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
         <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
       </svg>
       Подключить Google Диск
@@ -338,18 +321,14 @@ a { color:var(--primary); }
     <button class="btn btn-ghost btn-full" onclick="openFolder()" style="font-size:13px;padding:10px 16px;">
       Открыть общую папку на Google Drive
     </button>
-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     ЭКРАН: КАМЕРА
-══════════════════════════════════════════ -->
+<!-- CAMERA -->
 <div class="screen" id="camera">
   <video id="video" autoplay playsinline muted></video>
   <input type="file" id="file-input" accept="image/*,video/*" capture="environment" style="display:none">
 
-  <!-- Fallback -->
   <div class="cam-fallback" id="cam-fallback" style="display:none;">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5">
       <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
@@ -363,9 +342,8 @@ a { color:var(--primary); }
     </button>
   </div>
 
-  <!-- Top bar -->
   <div class="cam-top">
-    <div class="drive-badge" id="drive-badge">
+    <div class="drive-badge">
       <div class="badge-dot">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
           <polyline points="20 6 9 17 4 12"/>
@@ -389,13 +367,11 @@ a { color:var(--primary); }
     </div>
   </div>
 
-  <!-- Upload toast -->
   <div class="upload-toast hidden" id="toast">
     <div class="toast-dot" id="toast-dot"></div>
     <span id="toast-text"></span>
   </div>
 
-  <!-- Bottom controls -->
   <div class="cam-bottom">
     <div class="cam-controls">
       <button class="thumb-btn" id="thumb-btn" onclick="openGallery()" aria-label="Галерея">
@@ -417,7 +393,7 @@ a { color:var(--primary); }
   </div>
 </div>
 
-<!-- ГАЛЕРЕЯ -->
+<!-- GALLERY -->
 <div id="gallery">
   <div class="gal-header">
     <div>
@@ -430,4 +406,281 @@ a { color:var(--primary); }
       </svg>
     </button>
   </div>
-  <
+  <div class="gal-grid" id="gal-grid"></div>
+</div>
+
+<!-- QR MODAL -->
+<div id="qr-modal">
+  <div class="qr-card">
+    <h3>QR-код приложения</h3>
+    <p>Покажите гостям — пусть тоже снимают и сохраняют в общую папку</p>
+    <canvas id="qr-canvas"></canvas>
+    <div class="qr-url" id="qr-url"></div>
+    <button class="btn btn-ghost btn-full" onclick="closeQR()">Закрыть</button>
+  </div>
+</div>
+
+<script>
+// === STATE ===
+let S = {
+  clientId: '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com', // ВСТАВЬ СВОЙ ID
+  folderId: '1w88GP3nE81I_YiJaZeimlD4qnBHq93Th',        // общая папка
+  token: null,
+  tokenClient: null,
+  photos: [],
+  stream: null,
+  facing: 'environment',
+  useFileInput: false,
+};
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function openFolder() {
+  window.open('https://drive.google.com/drive/folders/1w88GP3nE81I_YiJaZeimlD4qnBHq93Th', '_blank');
+}
+
+// --- OAuth ---
+function connectDrive() {
+  const btn = document.getElementById('btn-connect');
+  if (!window.google || !google.accounts || !google.accounts.oauth2) {
+    alert('Библиотека Google не загрузилась. Проверьте соединение.');
+    return;
+  }
+
+  btn.innerHTML = '<div class="spinner"></div> Подключение...';
+  btn.classList.add('btn-loading');
+
+  S.tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: S.clientId,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    callback: async (resp) => {
+      btn.classList.remove('btn-loading');
+      btn.innerHTML = 'Подключить Google Диск';
+
+      if (resp.error) {
+        alert('Ошибка: ' + resp.error);
+        return;
+      }
+
+      S.token = resp.access_token;
+
+      try {
+        await startCamera();
+        show('camera');
+      } catch (e) {
+        alert('Ошибка подключения: ' + e.message);
+      }
+    }
+  });
+
+  S.tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function refreshToken() {
+  return new Promise((resolve, reject) => {
+    if (!S.tokenClient) return reject(new Error('No token client'));
+
+    const original = S.tokenClient.callback;
+    S.tokenClient.callback = (resp) => {
+      S.tokenClient.callback = original;
+      if (resp.error) return reject(new Error(resp.error));
+      S.token = resp.access_token;
+      resolve(resp.access_token);
+    };
+
+    S.tokenClient.requestAccessToken({ prompt: '' });
+  });
+}
+
+async function apiFetch(url, opts = {}) {
+  const headers = { Authorization: `Bearer ${S.token}`, ...(opts.headers || {}) };
+  let r = await fetch(url, { ...opts, headers });
+  if (r.status === 401) {
+    await refreshToken();
+    headers.Authorization = `Bearer ${S.token}`;
+    r = await fetch(url, { ...opts, headers });
+  }
+  if (!r.ok) throw new Error(`API error ${r.status}`);
+  return r.json();
+}
+
+// --- Upload to common folder ---
+async function uploadPhoto(blob, filename) {
+  const meta = { name: filename, parents: [S.folderId] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+  form.append('file', blob, filename);
+
+  return apiFetch(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+    { method: 'POST', body: form }
+  );
+}
+
+// --- Camera ---
+async function startCamera() {
+  const video = document.getElementById('video');
+  try {
+    S.stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: S.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false
+    });
+    video.srcObject = S.stream;
+  } catch (e) {
+    S.useFileInput = true;
+    video.style.display = 'none';
+    document.getElementById('cam-fallback').style.display = 'flex';
+    document.getElementById('shutter').style.display = 'none';
+    document.getElementById('btn-flip').style.display = 'none';
+    document.getElementById('file-input').addEventListener('change', onFileSelected);
+  }
+}
+
+async function flipCamera() {
+  S.facing = S.facing === 'environment' ? 'user' : 'environment';
+  if (S.stream) S.stream.getTracks().forEach(t => t.stop());
+  const video = document.getElementById('video');
+  try {
+    S.stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: S.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false
+    });
+    video.srcObject = S.stream;
+  } catch (e) {}
+}
+
+function shoot() {
+  if (S.useFileInput) {
+    document.getElementById('file-input').click();
+    return;
+  }
+
+  const video = document.getElementById('video');
+  if (!video.videoWidth) return;
+
+  const flash = document.getElementById('flash');
+  flash.classList.add('go');
+  setTimeout(() => flash.classList.remove('go'), 250);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  canvas.toBlob(blob => processCapture(blob), 'image/jpeg', 0.88);
+}
+
+function onFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  processCapture(file);
+  e.target.value = '';
+}
+
+// --- Processing & upload ---
+async function processCapture(blob) {
+  const idx = S.photos.length;
+  const dataUrl = await blobToDataUrl(blob);
+  S.photos.push({ dataUrl, status: 'uploading' });
+
+  updateCounter();
+  updateThumb(dataUrl);
+  addGalleryItem(idx);
+  setToast('uploading', 'Загрузка в общую папку...');
+
+  const filename = `photo_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
+  try {
+    const result = await uploadPhoto(blob, filename);
+    S.photos[idx].status = 'done';
+    S.photos[idx].driveId = result.id;
+    updateGalleryBadge(idx, 'done');
+    setToast('done', '✓ Сохранено в общей папке');
+    setTimeout(hideToast, 2800);
+  } catch (e) {
+    console.error(e);
+    S.photos[idx].status = 'error';
+    updateGalleryBadge(idx, 'error');
+    setToast('error', 'Ошибка загрузки');
+    setTimeout(hideToast, 3500);
+  }
+}
+
+function blobToDataUrl(blob) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.readAsDataURL(blob);
+  });
+}
+
+// --- UI helpers ---
+function updateCounter() {
+  document.getElementById('counter-num').textContent = S.photos.length;
+}
+
+function updateThumb(dataUrl) {
+  const btn = document.getElementById('thumb-btn');
+  btn.innerHTML = `<img src="${dataUrl}" alt="последний файл">`;
+}
+
+function setToast(state, text) {
+  const toast = document.getElementById('toast');
+  const dot   = document.getElementById('toast-dot');
+  document.getElementById('toast-text').textContent = text;
+  dot.className = 'toast-dot ' + state;
+  toast.classList.remove('hidden');
+}
+function hideToast() {
+  document.getElementById('toast').classList.add('hidden');
+}
+
+function addGalleryItem(idx) {
+  const grid = document.getElementById('gal-grid');
+  const item = document.createElement('div');
+  item.className = 'gal-item';
+  item.id = `gi-${idx}`;
+  item.innerHTML = `
+    <img src="${S.photos[idx].dataUrl}" alt="файл ${idx+1}" loading="lazy">
+    <div class="gal-badge uploading" id="gb-${idx}">
+      <div class="spinner" style="width:10px;height:10px;border-width:1.5px;"></div>
+    </div>`;
+  grid.prepend(item);
+  document.getElementById('gal-sub').textContent = S.photos.length + ' файлов';
+  document.getElementById('gal-title').textContent = 'PhotoDrive';
+}
+
+function updateGalleryBadge(idx, state) {
+  const badge = document.getElementById(`gb-${idx}`);
+  if (!badge) return;
+  badge.className = 'gal-badge ' + state;
+  if (state === 'done') {
+    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+  } else {
+    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+  }
+}
+
+function openGallery()  { document.getElementById('gallery').classList.add('open'); }
+function closeGallery() { document.getElementById('gallery').classList.remove('open'); }
+
+// --- QR ---
+function showQR() {
+  const modal = document.getElementById('qr-modal');
+  modal.classList.add('open');
+  const url = window.location.href.split('#')[0];
+  document.getElementById('qr-url').textContent = url;
+  QRCode.toCanvas(document.getElementById('qr-canvas'), url, {
+    width: 200,
+    color: { dark: '#000', light: '#fff' },
+    errorCorrectionLevel: 'H'
+  }, err => { if (err) console.error(err); });
+}
+function closeQR() { document.getElementById('qr-modal').classList.remove('open'); }
+document.getElementById('qr-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('qr-modal')) closeQR();
+});
+</script>
+</body>
+</html>
