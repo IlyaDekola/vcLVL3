@@ -25,8 +25,8 @@
   --text:     #ecedf0;
   --muted:    #8b8d99;
   --faint:    #50525e;
-  --primary:  #8b5cf6;   /* фиолетовый */
-  --primary-h: #7c3aed;   /* фиолетовый при hover */
+  --primary:  #8b5cf6;
+  --primary-h:#7c3aed;
   --success:  #5fa83c;
   --error:    #c94f8a;
 
@@ -248,8 +248,6 @@ a { color:var(--primary); }
   animation:spin .7s linear infinite;
 }
 @keyframes spin { to { transform:rotate(360deg) } }
-@keyframes flash-go { 0%{opacity:.9}100%{opacity:0} }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
 </style>
 </head>
 <body>
@@ -312,7 +310,7 @@ a { color:var(--primary); }
     </div>
 
     <button class="btn btn-primary btn-full" id="btn-connect" onclick="connectDrive()" style="padding:16px;font-size:16px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2">
         <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
       </svg>
       Подключить Google Диск
@@ -381,7 +379,7 @@ a { color:var(--primary); }
         </svg>
       </button>
 
-      <button class="shutter" onclick="shoot()" id="shutter" aria-label="Сделать фото">
+      <button class="shutter" onclick="shoot()" id="shutter" aria-label="Сделать фото/видео">
         <div class="shutter-inner"></div>
       </button>
 
@@ -423,8 +421,8 @@ a { color:var(--primary); }
 <script>
 // === STATE ===
 let S = {
-  clientId: '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com', // ВСТАВЬ СВОЙ ID
-  folderId: '1w88GP3nE81I_YiJaZeimlD4qnBHq93Th',        // общая папка
+  clientId: '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com',
+  folderId: '1w88GP3nE81I_YiJaZeimlD4qnBHq93Th',
   token: null,
   tokenClient: null,
   photos: [],
@@ -520,56 +518,26 @@ async function uploadPhoto(blob, filename) {
   );
 }
 
-// --- Camera ---
+// --- Camera: always native file input ---
 async function startCamera() {
   const video = document.getElementById('video');
-  try {
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: S.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-      audio: false
-    });
-    video.srcObject = S.stream;
-  } catch (e) {
-    S.useFileInput = true;
-    video.style.display = 'none';
-    document.getElementById('cam-fallback').style.display = 'flex';
-    document.getElementById('shutter').style.display = 'none';
-    document.getElementById('btn-flip').style.display = 'none';
-    document.getElementById('file-input').addEventListener('change', onFileSelected);
-  }
+
+  S.useFileInput = true;
+  video.style.display = 'none';
+  document.getElementById('cam-fallback').style.display = 'flex';
+  document.getElementById('shutter').style.display = 'none';
+  document.getElementById('btn-flip').style.display = 'none';
+
+  const input = document.getElementById('file-input');
+  input.removeEventListener('change', onFileSelected);
+  input.addEventListener('change', onFileSelected);
 }
 
-async function flipCamera() {
-  S.facing = S.facing === 'environment' ? 'user' : 'environment';
-  if (S.stream) S.stream.getTracks().forEach(t => t.stop());
-  const video = document.getElementById('video');
-  try {
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: S.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-      audio: false
-    });
-    video.srcObject = S.stream;
-  } catch (e) {}
-}
+// flipCamera остаётся, но фактически не используется
+async function flipCamera() {}
 
 function shoot() {
-  if (S.useFileInput) {
-    document.getElementById('file-input').click();
-    return;
-  }
-
-  const video = document.getElementById('video');
-  if (!video.videoWidth) return;
-
-  const flash = document.getElementById('flash');
-  flash.classList.add('go');
-  setTimeout(() => flash.classList.remove('go'), 250);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  canvas.toBlob(blob => processCapture(blob), 'image/jpeg', 0.88);
+  document.getElementById('file-input').click();
 }
 
 function onFileSelected(e) {
@@ -579,22 +547,31 @@ function onFileSelected(e) {
   e.target.value = '';
 }
 
-// --- Processing & upload ---
-async function processCapture(blob) {
+// --- Processing & upload (photo + video) ---
+async function processCapture(file) {
+  const mime = file.type || '';
+  const isVideo = mime.startsWith('video');
+
   const idx = S.photos.length;
-  const dataUrl = await blobToDataUrl(blob);
-  S.photos.push({ dataUrl, status: 'uploading' });
+  let dataUrl = null;
+
+  if (!isVideo) {
+    dataUrl = await blobToDataUrl(file);
+  }
+
+  S.photos.push({ dataUrl, status: 'uploading', mime });
 
   updateCounter();
-  updateThumb(dataUrl);
+  if (dataUrl) updateThumb(dataUrl);
   addGalleryItem(idx);
   setToast('uploading', 'Загрузка в общую папку...');
 
-  const filename = `photo_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
+  const ext = isVideo ? 'mp4' : 'jpg';
+  const filename = `media_${new Date().toISOString().replace(/[:.]/g, '-')}.${ext}`;
+
   try {
-    const result = await uploadPhoto(blob, filename);
+    await uploadPhoto(file, filename);
     S.photos[idx].status = 'done';
-    S.photos[idx].driveId = result.id;
     updateGalleryBadge(idx, 'done');
     setToast('done', '✓ Сохранено в общей папке');
     setTimeout(hideToast, 2800);
@@ -641,8 +618,11 @@ function addGalleryItem(idx) {
   const item = document.createElement('div');
   item.className = 'gal-item';
   item.id = `gi-${idx}`;
+  const preview = S.photos[idx].dataUrl
+    ? `<img src="${S.photos[idx].dataUrl}" alt="файл ${idx+1}" loading="lazy">`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);background:rgba(255,255,255,.05);">Видео</div>`;
   item.innerHTML = `
-    <img src="${S.photos[idx].dataUrl}" alt="файл ${idx+1}" loading="lazy">
+    ${preview}
     <div class="gal-badge uploading" id="gb-${idx}">
       <div class="spinner" style="width:10px;height:10px;border-width:1.5px;"></div>
     </div>`;
