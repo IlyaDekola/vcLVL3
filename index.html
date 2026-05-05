@@ -586,16 +586,19 @@ function show(id) {
 
 // ── Setup screen ──
 function saveSetup() {
-  const cid = document.getElementById('inp-cid').value.trim();
-  if (!cid) { alert('Введите Google Client ID'); return; }
-  S.clientId    = cid;
-  S.folderName  = document.getElementById('inp-folder').value.trim() || 'PhotoDrive';
-  S.eventTitle  = document.getElementById('inp-title').value.trim();
+  // ХАРДКОДИМ Client ID
+  S.clientId   = '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com';
+  S.folderName = 'PhotoDrive';   // можно поменять имя папки на Drive
+  S.eventTitle = '';             // или, например, 'Свадьба Ани и Максима';
 
   const title = S.eventTitle || 'PhotoDrive';
   document.getElementById('connect-title').textContent = title;
   show('connect');
 }
+
+window.addEventListener('load', () => {
+  saveSetup();  // сразу переходим к экрану подключения Google Диска
+});
 
 function goSetup() { show('setup'); }
 
