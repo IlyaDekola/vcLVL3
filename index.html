@@ -7,117 +7,247 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>PhotoDrive</title>
+
+  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- QR Code library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <!-- Fonts -->
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
+
 <style>
 :root {
-  --bg:#0c0d10;
-  --surface:#141519;
-  --surface2:#1a1c22;
-  --border:rgba(255,255,255,0.08);
-  --text:#ecedf0;
-  --muted:#8b8d99;
-  --faint:#50525e;
-  --primary:#8b5cf6;
+  --bg:       #0c0d10;
+  --surface:  #141519;
+  --surf2:    #1a1c22;
+  --surf3:    #22242c;
+  --border:   rgba(255,255,255,0.08);
+  --text:     #ecedf0;
+  --muted:    #8b8d99;
+  --faint:    #50525e;
+  --primary:  #8b5cf6;
   --primary-h:#7c3aed;
-  --success:#5fa83c;
-  --error:#c94f8a;
-  --video:#2563eb;
-  --video-h:#1d4ed8;
-  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-xl:20px;--r-full:9999px;
+  --success:  #5fa83c;
+  --error:    #c94f8a;
+
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 20px; --r-full: 9999px;
   --sp2:8px;--sp3:12px;--sp4:16px;--sp5:20px;--sp6:24px;--sp8:32px;
-  --ease:220ms cubic-bezier(0.16,1,0.3,1);
-  --font:'Satoshi','Inter',sans-serif;
+  --ease: 220ms cubic-bezier(0.16,1,0.3,1);
+  --font: 'Satoshi','Inter',sans-serif;
+
+  --tx-sm: clamp(.875rem,.8rem + .35vw,1rem);
+  --tx-base: clamp(1rem,.95rem + .25vw,1.125rem);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:none;text-size-adjust:none}
-body{min-height:100dvh;font-family:var(--font);color:var(--text);background:var(--bg);overflow:hidden;-webkit-font-smoothing:antialiased}
-img,video,canvas{display:block;max-width:100%}
-button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
-button:active{transform:scale(.97)}
-.screen{display:none;min-height:100dvh;flex-direction:column}
-.screen.active{display:flex}
 
-#connect{align-items:center;justify-content:center;padding:var(--sp8) var(--sp6);gap:var(--sp6);background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(139,92,246,.18) 0%,transparent 60%),var(--bg)}
-.connect-card{width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:var(--sp5)}
-.connect-icon{width:88px;height:88px;border-radius:28px;background:linear-gradient(135deg,var(--primary) 0%,#6d28d9 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px rgba(139,92,246,.35)}
-.perm-list{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
-.perm-item{display:flex;align-items:center;gap:var(--sp3);padding:14px var(--sp4);border-bottom:1px solid var(--border);font-size:14px}
-.perm-item:last-child{border-bottom:none}
-.perm-ic{width:34px;height:34px;border-radius:var(--r-sm);flex-shrink:0;background:rgba(139,92,246,.12);color:var(--primary);display:flex;align-items:center;justify-content:center}
-.perm-name{font-weight:600;font-size:13px}
-.perm-desc{font-size:12px;color:var(--muted)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:var(--r-full);font-size:15px;font-weight:600;cursor:pointer;transition:all var(--ease);text-decoration:none;font-family:var(--font)}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-h)}
-.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.btn-full{width:100%}
-.btn-loading{opacity:.6;pointer-events:none}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { -webkit-text-size-adjust:none; text-size-adjust:none; scroll-behavior:smooth; }
+body {
+  min-height:100dvh; font-family:var(--font); font-size:var(--tx-base);
+  color:var(--text); background:var(--bg); overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img,video,canvas { display:block; max-width:100%; }
+button { cursor:pointer; background:none; border:none; font:inherit; color:inherit; }
+button:active { transform:scale(.97); }
+a { color:var(--primary); }
 
-#camera{position:relative;background:var(--bg)}
-.cam-top{position:absolute;top:0;left:0;right:0;padding:16px 18px;padding-top:calc(16px + env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(0,0,0,.5) 0%,transparent 100%);z-index:10}
-.drive-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-full);padding:5px 12px 5px 5px;font-size:13px;color:rgba(255,255,255,.9)}
-.badge-dot{width:22px;height:22px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center}
-.cam-actions{display:flex;gap:var(--sp2)}
-.btn-ic{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center}
-.btn-ic:active{transform:scale(.9)}
+.screen { display:none; min-height:100dvh; flex-direction:column; }
+.screen.active { display:flex; }
 
-.cam-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;background:var(--bg)}
-.center-icon{width:72px;height:72px;border-radius:24px;background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(37,99,235,.18));display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08)}
-.shoot-hint{font-size:16px;color:var(--muted);text-align:center;line-height:1.6}
-.action-row{display:flex;gap:12px;width:100%;max-width:340px}
-.action-btn{flex:1;min-height:56px;border-radius:18px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--border)}
-.action-photo{background:var(--primary);color:#fff}
-.action-photo:hover{background:var(--primary-h)}
-.action-video{background:var(--video);color:#fff}
-.action-video:hover{background:var(--video-h)}
-.note{font-size:12px;color:var(--faint);text-align:center;line-height:1.5;max-width:320px}
+/* CONNECT */
+#connect {
+  align-items:center; justify-content:center;
+  padding:var(--sp8) var(--sp6); gap:var(--sp6);
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(139,92,246,.18) 0%, transparent 60%), var(--bg);
+}
+.connect-card {
+  width:100%; max-width:360px;
+  display:flex; flex-direction:column; align-items:center; gap:var(--sp5);
+}
+.connect-icon {
+  width:88px; height:88px; border-radius:28px;
+  background:linear-gradient(135deg,var(--primary) 0%,#6d28d9 100%);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 20px 60px rgba(139,92,246,.35);
+}
+.perm-list {
+  width:100%; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); overflow:hidden;
+}
+.perm-item {
+  display:flex; align-items:center; gap:var(--sp3);
+  padding:14px var(--sp4); border-bottom:1px solid var(--border); font-size:var(--tx-sm);
+}
+.perm-item:last-child { border-bottom:none; }
+.perm-ic {
+  width:34px; height:34px; border-radius:var(--r-sm); flex-shrink:0;
+  background:rgba(139,92,246,.12); color:var(--primary);
+  display:flex; align-items:center; justify-content:center;
+}
+.perm-name { font-weight:600; font-size:13px; }
+.perm-desc { font-size:12px; color:var(--muted); }
 
-.cam-bottom{position:absolute;bottom:0;left:0;right:0;z-index:10;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
-.cam-controls{display:flex;align-items:center;justify-content:space-between;padding:24px 24px 16px;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 100%)}
-.thumb-btn{width:54px;height:54px;border-radius:var(--r-md);overflow:hidden;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.thumb-btn img{width:100%;height:100%;object-fit:cover}
-.photo-counter{text-align:center}
-.counter-num{font-size:22px;font-weight:700;color:#fff}
-.counter-lbl{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
-.ghost-slot{width:54px;height:54px}
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--sp2);
+  padding:14px var(--sp6); border-radius:var(--r-full);
+  font-size:var(--tx-sm); font-weight:600; cursor:pointer; border:none;
+  transition:all var(--ease); text-decoration:none; font-family:var(--font);
+}
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-h); }
+.btn-ghost { background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--border); }
+.btn-ghost:hover { background:rgba(255,255,255,.1); }
+.btn-full { width:100%; }
+.btn-loading { opacity:.6; pointer-events:none; }
 
-.upload-toast{position:absolute;top:calc(env(safe-area-inset-top,0px) + 72px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-full);padding:8px 16px;font-size:13px;white-space:nowrap;display:flex;align-items:center;gap:8px;z-index:20;transition:opacity var(--ease),transform var(--ease);pointer-events:none}
-.upload-toast.hidden{opacity:0;transform:translateX(-50%) translateY(-8px)}
-.toast-dot{width:8px;height:8px;border-radius:50%}
-.toast-dot.uploading{background:var(--primary);animation:pulse 1s ease-in-out infinite}
-.toast-dot.done{background:var(--success)}
-.toast-dot.error{background:var(--error)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+/* CAMERA (нативная камера через file input) */
+#camera { position:relative; background:var(--bg); }
 
-#gallery{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:100;display:none;flex-direction:column}
-#gallery.open{display:flex}
-.gal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;padding-top:calc(16px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--border)}
-.gal-title{font-size:17px;font-weight:700}
-.gal-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.gal-grid{flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start}
-.gal-item{aspect-ratio:1;border-radius:4px;overflow:hidden;position:relative}
-.gal-item img{width:100%;height:100%;object-fit:cover}
-.gal-video-thumb{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:rgba(255,255,255,.05);font-size:10px;color:var(--muted)}
-.gal-badge{position:absolute;bottom:4px;right:4px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
-.gal-badge.uploading{background:rgba(139,92,246,.8)}
-.gal-badge.done{background:rgba(95,168,60,.85)}
-.gal-badge.error{background:rgba(201,79,138,.85)}
+.cam-top {
+  position:absolute; top:0; left:0; right:0;
+  padding:16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
+  display:flex; align-items:center; justify-content:space-between;
+  background:linear-gradient(to bottom,rgba(0,0,0,.5) 0%,transparent 100%);
+  z-index:10;
+}
+.drive-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12); border-radius:var(--r-full);
+  padding:5px 12px 5px 5px; font-size:13px; color:rgba(255,255,255,.9);
+}
+.badge-dot {
+  width:22px; height:22px; border-radius:50%;
+  background:var(--success); display:flex; align-items:center; justify-content:center;
+}
+.cam-actions { display:flex; gap:var(--sp2); }
 
-#qr-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
-#qr-modal.open{display:flex}
-.qr-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;display:flex;flex-direction:column;align-items:center;gap:16px;max-width:300px;width:100%;text-align:center}
-.qr-card h3{font-size:17px;font-weight:700}
-.qr-card p{font-size:13px;color:var(--muted);line-height:1.5}
-#qr-canvas{border-radius:var(--r-md);background:#fff;padding:10px}
-.qr-url{font-size:11px;color:var(--faint);word-break:break-all}
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.btn-ic {
+  width:40px; height:40px; border-radius:50%;
+  background:rgba(0,0,0,.45); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.14); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+}
+.btn-ic:active { transform:scale(.9); }
+
+/* центр: иконка + подсказка + круг */
+.cam-center {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:var(--sp5); padding:var(--sp6); background:var(--bg);
+}
+.cam-center-icon {
+  width:72px; height:72px; border-radius:24px;
+  background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(37,99,235,.18));
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,255,255,.08);
+}
+.cam-center-text {
+  font-size:15px; color:var(--muted); text-align:center; line-height:1.6;
+}
+
+/* bottom */
+.cam-bottom {
+  position:absolute; bottom:0; left:0; right:0; z-index:10;
+  padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
+}
+.cam-controls {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--sp6) var(--sp6) var(--sp4);
+  background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 100%);
+}
+
+.thumb-btn {
+  width:54px; height:54px; border-radius:var(--r-md); overflow:hidden;
+  background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center;
+}
+.thumb-btn img { width:100%; height:100%; object-fit:cover; }
+
+.photo-counter { text-align:center; }
+.counter-num { font-size:22px; font-weight:700; color:#fff; }
+.counter-lbl { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+
+.ghost-slot { width:54px; height:54px; }
+
+/* upload toast */
+.upload-toast {
+  position:absolute; top:calc(env(safe-area-inset-top,0px) + 72px);
+  left:50%; transform:translateX(-50%);
+  background:rgba(0,0,0,.72); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1); border-radius:var(--r-full);
+  padding:8px 16px; font-size:13px; white-space:nowrap;
+  display:flex; align-items:center; gap:8px; z-index:20;
+  transition:opacity var(--ease), transform var(--ease);
+  pointer-events:none;
+}
+.upload-toast.hidden { opacity:0; transform:translateX(-50%) translateY(-8px); }
+.toast-dot { width:8px; height:8px; border-radius:50%; }
+.toast-dot.uploading { background:var(--primary); animation:pulse 1s ease-in-out infinite; }
+.toast-dot.done      { background:var(--success); }
+.toast-dot.error     { background:var(--error); }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+
+/* gallery */
+#gallery {
+  position:fixed; inset:0; background:rgba(0,0,0,.94); z-index:100;
+  display:none; flex-direction:column;
+}
+#gallery.open { display:flex; }
+.gal-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
+  border-bottom:1px solid var(--border);
+}
+.gal-title { font-size:17px; font-weight:700; }
+.gal-sub   { font-size:12px; color:var(--muted); margin-top:2px; }
+.gal-grid {
+  flex:1; overflow-y:auto; padding:8px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:3px; align-content:start;
+}
+.gal-item { aspect-ratio:1; border-radius:4px; overflow:hidden; position:relative; }
+.gal-item img { width:100%; height:100%; object-fit:cover; }
+.gal-video-thumb {
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  background:rgba(255,255,255,.05); font-size:10px; color:var(--muted);
+}
+.gal-badge {
+  position:absolute; bottom:4px; right:4px;
+  width:18px; height:18px; border-radius:50%;
+  background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center;
+}
+.gal-badge.uploading { background:rgba(139,92,246,.8); }
+.gal-badge.done      { background:rgba(95,168,60,.85); }
+.gal-badge.error     { background:rgba(201,79,138,.85); }
+
+/* QR modal */
+#qr-modal {
+  position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:200;
+  display:none; align-items:center; justify-content:center; padding:var(--sp4);
+}
+#qr-modal.open { display:flex; }
+.qr-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-xl); padding:var(--sp8);
+  display:flex; flex-direction:column; align-items:center; gap:var(--sp4);
+  max-width:300px; width:100%; text-align:center;
+}
+.qr-card h3 { font-size:17px; font-weight:700; }
+.qr-card p  { font-size:13px; color:var(--muted); line-height:1.5; }
+#qr-canvas  { border-radius:var(--r-md); background:#fff; padding:10px; }
+.qr-url     { font-size:11px; color:var(--faint); word-break:break-all; }
+.spinner {
+  width:18px; height:18px; border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg) } }
 </style>
 </head>
 <body>
+
+<!-- CONNECT -->
 <div class="screen active" id="connect">
   <div class="connect-card">
     <div class="connect-icon">
@@ -132,54 +262,76 @@ button:active{transform:scale(.97)}
     <div style="text-align:center;">
       <h1 style="font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px;">PhotoDrive</h1>
       <p style="font-size:15px;color:var(--muted);line-height:1.6;">
-        Общая папка в Google Drive<br>Фото и видео сразу летят туда
+        Общая папка в Google Drive<br>Снимайте — файлы прилетят сразу туда
       </p>
     </div>
 
     <div class="perm-list">
       <div class="perm-item">
         <div class="perm-ic">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+          </svg>
         </div>
-        <div><div class="perm-name">Общая папка</div><div class="perm-desc">Все гости сохраняют туда же</div></div>
+        <div>
+          <div class="perm-name">Общая папка</div>
+          <div class="perm-desc">Все гости сохраняют туда же</div>
+        </div>
       </div>
       <div class="perm-item">
         <div class="perm-ic">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+          </svg>
         </div>
-        <div><div class="perm-name">Отдельно фото и видео</div><div class="perm-desc">Две кнопки, чтобы не путаться в режимах</div></div>
+        <div>
+          <div class="perm-name">Загрузка фото и видео</div>
+          <div class="perm-desc">Автоматически после каждого снимка</div>
+        </div>
       </div>
       <div class="perm-item">
         <div class="perm-ic">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
         </div>
-        <div><div class="perm-name">Только созданные файлы</div><div class="perm-desc">Ваш Drive не читается, только запись</div></div>
+        <div>
+          <div class="perm-name">Только созданные файлы</div>
+          <div class="perm-desc">Ваш Drive не читается, только запись</div>
+        </div>
       </div>
     </div>
 
     <button class="btn btn-primary btn-full" id="btn-connect" onclick="connectDrive()" style="padding:16px;font-size:16px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+      </svg>
       Подключить Google Диск
     </button>
-
-    <button class="btn btn-ghost btn-full" onclick="openFolder()" style="font-size:13px;padding:10px 16px;">Открыть общую папку на Google Drive</button>
   </div>
 </div>
 
+<!-- CAMERA -->
 <div class="screen" id="camera">
-  <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none">
-  <input type="file" id="video-input" accept="video/*" capture="environment" style="display:none">
+  <!-- один input: фото или видео, выбор даёт система -->
+  <input type="file" id="file-input" accept="image/*,video/*" capture="environment" style="display:none">
 
   <div class="cam-top">
     <div class="drive-badge">
       <div class="badge-dot">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
       </div>
       Общая папка Drive
     </div>
     <div class="cam-actions">
       <button class="btn-ic" onclick="showQR()" title="QR-код">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M20 14v3M14 20h6"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <path d="M14 14h3v3M20 14v3M14 20h6"/>
+        </svg>
       </button>
     </div>
   </div>
@@ -190,45 +342,57 @@ button:active{transform:scale(.97)}
   </div>
 
   <div class="cam-center">
-    <div class="center-icon">
-      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+    <div class="cam-center-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
         <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
         <circle cx="12" cy="13" r="4"/>
       </svg>
     </div>
-    <p class="shoot-hint">Выберите, что хотите снять</p>
-    <div class="action-row">
-      <button class="action-btn action-photo" onclick="shootPhoto()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Фото
-      </button>
-      <button class="action-btn action-video" onclick="shootVideo()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-        Видео
-      </button>
-    </div>
-    <p class="note">Системная камера откроется в выбранном режиме. После подтверждения файл сразу загрузится в общую папку.</p>
+    <p class="cam-center-text">
+      Нажмите кнопку «Снять» ниже.<br>
+      Откроется камера смартфона — фото и видео<br>сразу сохраняются в общую папку.
+    </p>
+    <button class="btn btn-primary" onclick="shoot()" style="padding:14px 32px;">
+      📷 Снять фото или видео
+    </button>
   </div>
 
   <div class="cam-bottom">
     <div class="cam-controls">
       <button class="thumb-btn" id="thumb-btn" onclick="openGallery()" aria-label="Галерея">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
       </button>
-      <div class="photo-counter"><div class="counter-num" id="counter-num">0</div><div class="counter-lbl">файлов</div></div>
+
+      <div class="photo-counter">
+        <div class="counter-num" id="counter-num">0</div>
+        <div class="counter-lbl">фото/видео</div>
+      </div>
+
       <div class="ghost-slot"></div>
     </div>
   </div>
 </div>
 
+<!-- GALLERY -->
 <div id="gallery">
   <div class="gal-header">
-    <div><div class="gal-title">Галерея</div><div class="gal-sub" id="gal-sub">0 файлов</div></div>
-    <button class="btn-ic" onclick="closeGallery()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div>
+      <div class="gal-title">Галерея</div>
+      <div class="gal-sub" id="gal-sub">0 файлов</div>
+    </div>
+    <button class="btn-ic" onclick="closeGallery()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
   </div>
   <div class="gal-grid" id="gal-grid"></div>
 </div>
 
+<!-- QR MODAL -->
 <div id="qr-modal">
   <div class="qr-card">
     <h3>QR-код приложения</h3>
@@ -240,6 +404,7 @@ button:active{transform:scale(.97)}
 </div>
 
 <script>
+// === STATE ===
 const S = {
   clientId: '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com',
   folderId: '1w88GP3nE81I_YiJaZeimlD4qnBHq93Th',
@@ -248,138 +413,213 @@ const S = {
   photos: []
 };
 
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-function openFolder(){window.open('https://drive.google.com/drive/folders/' + S.folderId,'_blank')}
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-function connectDrive(){
-  const btn=document.getElementById('btn-connect');
-  if(!window.google?.accounts?.oauth2){alert('Библиотека Google не загрузилась. Проверьте соединение.');return}
-  btn.innerHTML='<div class="spinner"></div> Подключение...';
+
+// --- OAuth ---
+function connectDrive() {
+  const btn = document.getElementById('btn-connect');
+  if (!window.google?.accounts?.oauth2) {
+    alert('Библиотека Google не загрузилась. Проверьте соединение.');
+    return;
+  }
+
+  btn.innerHTML = '<div class="spinner"></div> Подключение...';
   btn.classList.add('btn-loading');
 
-  S.tokenClient=google.accounts.oauth2.initTokenClient({
-    client_id:S.clientId,
-    scope:'https://www.googleapis.com/auth/drive.file',
-    callback:(resp)=>{
+  S.tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: S.clientId,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    callback: (resp) => {
       btn.classList.remove('btn-loading');
-      btn.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> Подключить Google Диск';
-      if(resp.error){alert('Ошибка: ' + resp.error);return}
-      S.token=resp.access_token;
-      const photoInput=document.getElementById('photo-input');
-      const videoInput=document.getElementById('video-input');
-      photoInput.removeEventListener('change',onPhotoSelected);
-      videoInput.removeEventListener('change',onVideoSelected);
-      photoInput.addEventListener('change',onPhotoSelected);
-      videoInput.addEventListener('change',onVideoSelected);
+      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> Подключить Google Диск';
+
+      if (resp.error) {
+        alert('Ошибка: ' + resp.error);
+        return;
+      }
+
+      S.token = resp.access_token;
+
+      const input = document.getElementById('file-input');
+      input.removeEventListener('change', onFileSelected);
+      input.addEventListener('change', onFileSelected);
+
       show('camera');
     }
   });
 
-  S.tokenClient.requestAccessToken({prompt:'consent'});
+  S.tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 
-function refreshToken(){
-  return new Promise((resolve,reject)=>{
-    if(!S.tokenClient) return reject(new Error('No token client'));
-    const orig=S.tokenClient.callback;
-    S.tokenClient.callback=(resp)=>{
-      S.tokenClient.callback=orig;
-      if(resp.error) return reject(new Error(resp.error));
-      S.token=resp.access_token;
+function refreshToken() {
+  return new Promise((resolve, reject) => {
+    if (!S.tokenClient) return reject(new Error('No token client'));
+    const orig = S.tokenClient.callback;
+    S.tokenClient.callback = (resp) => {
+      S.tokenClient.callback = orig;
+      if (resp.error) return reject(new Error(resp.error));
+      S.token = resp.access_token;
       resolve();
     };
-    S.tokenClient.requestAccessToken({prompt:''});
+    S.tokenClient.requestAccessToken({ prompt: '' });
   });
 }
 
-async function apiFetch(url,opts={}){
-  const headers={Authorization:`Bearer ${S.token}`,...(opts.headers||{})};
-  let r=await fetch(url,{...opts,headers});
-  if(r.status===401){
+async function apiFetch(url, opts = {}) {
+  const headers = { Authorization: `Bearer ${S.token}`, ...(opts.headers || {}) };
+  let r = await fetch(url, { ...opts, headers });
+  if (r.status === 401) {
     await refreshToken();
-    headers.Authorization=`Bearer ${S.token}`;
-    r=await fetch(url,{...opts,headers});
+    headers.Authorization = `Bearer ${S.token}`;
+    r = await fetch(url, { ...opts, headers });
   }
-  if(!r.ok) throw new Error(`API error ${r.status}`);
+  if (!r.ok) throw new Error(`API error ${r.status}`);
   return r.json();
 }
 
-async function uploadFile(file,filename){
-  const meta={name:filename,parents:[S.folderId]};
-  const form=new FormData();
-  form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
-  form.append('file',file,filename);
-  return apiFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',{method:'POST',body:form});
+// --- Upload ---
+async function uploadFile(file, filename) {
+  const meta = { name: filename, parents: [S.folderId] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+  form.append('file', file, filename);
+
+  return apiFetch(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+    { method: 'POST', body: form }
+  );
 }
 
-function shootPhoto(){document.getElementById('photo-input').click()}
-function shootVideo(){document.getElementById('video-input').click()}
-function onPhotoSelected(e){const file=e.target.files[0];if(!file) return;e.target.value='';processFile(file,'photo')}
-function onVideoSelected(e){const file=e.target.files[0];if(!file) return;e.target.value='';processFile(file,'video')}
+// --- Shoot: открываем системную камеру/галерею ---
+function shoot() {
+  document.getElementById('file-input').click();
+}
 
-async function processFile(file,forcedType){
-  const isVideo=forcedType==='video' || file.type.startsWith('video');
-  const idx=S.photos.length;
-  let dataUrl=null;
-  if(!isVideo){dataUrl=await blobToDataUrl(file)}
-  S.photos.push({dataUrl,status:'uploading',isVideo});
+// --- file selected ---
+function onFileSelected(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  processFile(file);
+}
+
+// --- Process & upload ---
+async function processFile(file) {
+  const isVideo = file.type.startsWith('video');
+  const idx = S.photos.length;
+  let dataUrl = null;
+
+  if (!isVideo) {
+    dataUrl = await blobToDataUrl(file);
+  }
+
+  S.photos.push({ dataUrl, status: 'uploading', isVideo });
+
   updateCounter();
-  if(dataUrl) updateThumb(dataUrl);
+  if (dataUrl) updateThumb(dataUrl);
   addGalleryItem(idx);
-  setToast('uploading', isVideo ? 'Загрузка видео...' : 'Загрузка фото...');
+  setToast('uploading', isVideo ? 'Загрузка видео…' : 'Загрузка фото…');
 
-  const originalExt=(file.name.split('.').pop()||'').toLowerCase();
-  const ext=isVideo ? (originalExt || 'mp4') : (originalExt || 'jpg');
-  const prefix=isVideo ? 'video' : 'photo';
-  const filename=`${prefix}_${new Date().toISOString().replace(/[:.]/g,'-')}.${ext}`;
+  const originalExt = (file.name.split('.').pop() || '').toLowerCase();
+  const ext = originalExt || (isVideo ? 'mp4' : 'jpg');
+  const prefix = isVideo ? 'video' : 'photo';
+  const filename = `${prefix}_${new Date().toISOString().replace(/[:.]/g, '-')}.${ext}`;
 
-  try{
-    await uploadFile(file,filename);
-    S.photos[idx].status='done';
-    updateGalleryBadge(idx,'done');
+  try {
+    await uploadFile(file, filename);
+    S.photos[idx].status = 'done';
+    updateGalleryBadge(idx, 'done');
     setToast('done', isVideo ? '✓ Видео сохранено в общей папке' : '✓ Фото сохранено в общей папке');
-    setTimeout(hideToast,2800);
-  }catch(err){
+    setTimeout(hideToast, 2800);
+  } catch (err) {
     console.error(err);
-    S.photos[idx].status='error';
-    updateGalleryBadge(idx,'error');
-    setToast('error','Ошибка загрузки');
-    setTimeout(hideToast,3500);
+    S.photos[idx].status = 'error';
+    updateGalleryBadge(idx, 'error');
+    setToast('error', 'Ошибка загрузки');
+    setTimeout(hideToast, 3500);
   }
 }
 
-function blobToDataUrl(blob){return new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(blob)})}
-function updateCounter(){document.getElementById('counter-num').textContent=S.photos.length}
-function updateThumb(dataUrl){document.getElementById('thumb-btn').innerHTML=`<img src="${dataUrl}" alt="превью">`}
-function setToast(state,text){document.getElementById('toast-text').textContent=text;document.getElementById('toast-dot').className='toast-dot ' + state;document.getElementById('toast').classList.remove('hidden')}
-function hideToast(){document.getElementById('toast').classList.add('hidden')}
-
-function addGalleryItem(idx){
-  const item=document.createElement('div');
-  item.className='gal-item';
-  item.id=`gi-${idx}`;
-  const preview=S.photos[idx].dataUrl
-    ? `<img src="${S.photos[idx].dataUrl}" alt="фото" loading="lazy">`
-    : `<div class="gal-video-thumb"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>Видео</div>`;
-  item.innerHTML=`${preview}<div class="gal-badge uploading" id="gb-${idx}"><div class="spinner" style="width:10px;height:10px;border-width:1.5px;"></div></div>`;
-  document.getElementById('gal-grid').prepend(item);
-  document.getElementById('gal-sub').textContent=S.photos.length + ' файлов';
+function blobToDataUrl(blob) {
+  return new Promise(res => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.readAsDataURL(blob);
+  });
 }
 
-function updateGalleryBadge(idx,state){
-  const b=document.getElementById(`gb-${idx}`);
-  if(!b) return;
-  b.className='gal-badge ' + state;
-  b.innerHTML=state==='done'
+// --- UI helpers ---
+function updateCounter() {
+  document.getElementById('counter-num').textContent = S.photos.length;
+}
+
+function updateThumb(dataUrl) {
+  document.getElementById('thumb-btn').innerHTML =
+    `<img src="${dataUrl}" alt="превью">`;
+}
+
+function setToast(state, text) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  document.getElementById('toast-dot').className = 'toast-dot ' + state;
+  toast.classList.remove('hidden');
+}
+function hideToast() {
+  document.getElementById('toast').classList.add('hidden');
+}
+
+function addGalleryItem(idx) {
+  const item = document.createElement('div');
+  item.className = 'gal-item';
+  item.id = `gi-${idx}`;
+
+  const preview = S.photos[idx].dataUrl
+    ? `<img src="${S.photos[idx].dataUrl}" alt="фото" loading="lazy">`
+    : `<div class="gal-video-thumb">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+           <polygon points="5 3 19 12 5 21 5 3"/>
+         </svg>
+         Видео
+       </div>`;
+
+  item.innerHTML = `${preview}
+    <div class="gal-badge uploading" id="gb-${idx}">
+      <div class="spinner" style="width:10px;height:10px;border-width:1.5px;"></div>
+    </div>`;
+
+  document.getElementById('gal-grid').prepend(item);
+  document.getElementById('gal-sub').textContent = S.photos.length + ' файлов';
+}
+
+function updateGalleryBadge(idx, state) {
+  const b = document.getElementById(`gb-${idx}`);
+  if (!b) return;
+  b.className = 'gal-badge ' + state;
+  b.innerHTML = state === 'done'
     ? `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`
     : `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
 }
 
-function openGallery(){document.getElementById('gallery').classList.add('open')}
-function closeGallery(){document.getElementById('gallery').classList.remove('open')}
-function showQR(){document.getElementById('qr-modal').classList.add('open');const url=location.href.split('#')[0];document.getElementById('qr-url').textContent=url;QRCode.toCanvas(document.getElementById('qr-canvas'),url,{width:200,color:{dark:'#000',light:'#fff'},errorCorrectionLevel:'H'})}
-function closeQR(){document.getElementById('qr-modal').classList.remove('open')}
-document.getElementById('qr-modal').addEventListener('click',e=>{if(e.target===document.getElementById('qr-modal')) closeQR()})
+function openGallery()  { document.getElementById('gallery').classList.add('open'); }
+function closeGallery() { document.getElementById('gallery').classList.remove('open'); }
+
+// --- QR ---
+function showQR() {
+  document.getElementById('qr-modal').classList.add('open');
+  const url = location.href.split('#')[0];
+  document.getElementById('qr-url').textContent = url;
+  QRCode.toCanvas(document.getElementById('qr-canvas'), url, {
+    width: 200, color: { dark: '#000', light: '#fff' }, errorCorrectionLevel: 'H'
+  });
+}
+function closeQR() { document.getElementById('qr-modal').classList.remove('open'); }
+document.getElementById('qr-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('qr-modal')) closeQR();
+});
 </script>
 </body>
 </html>
