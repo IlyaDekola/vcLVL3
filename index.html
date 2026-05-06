@@ -7,20 +7,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>PhotoDrive</title>
-
-  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- QR Code library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <!-- Fonts -->
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
-
 <style>
 :root {
   --bg:       #0c0d10;
   --surface:  #141519;
-  --surf2:    #1a1c22;
-  --surf3:    #22242c;
   --border:   rgba(255,255,255,0.08);
   --text:     #ecedf0;
   --muted:    #8b8d99;
@@ -29,230 +22,225 @@
   --primary-h:#7c3aed;
   --success:  #5fa83c;
   --error:    #c94f8a;
-
-  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 20px; --r-full: 9999px;
-  --sp1:4px;--sp2:8px;--sp3:12px;--sp4:16px;--sp5:20px;--sp6:24px;--sp8:32px;
-  --ease: 220ms cubic-bezier(0.16,1,0.3,1);
-  --font: 'Satoshi','Inter',sans-serif;
-
-  --tx-xs: clamp(.75rem,.7rem + .25vw,.875rem);
-  --tx-sm: clamp(.875rem,.8rem + .35vw,1rem);
-  --tx-base: clamp(1rem,.95rem + .25vw,1.125rem);
-  --tx-lg: clamp(1.125rem,1rem + .75vw,1.5rem);
-  --tx-xl: clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-xl:20px;--r-full:9999px;
+  --sp2:8px;--sp3:12px;--sp4:16px;--sp5:20px;--sp6:24px;--sp8:32px;
+  --ease:220ms cubic-bezier(0.16,1,0.3,1);
+  --font:'Satoshi','Inter',sans-serif;
+  --tx-sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --tx-base:clamp(1rem,.95rem + .25vw,1.125rem);
 }
-
-*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-html { -webkit-text-size-adjust:none; text-size-adjust:none; scroll-behavior:smooth; }
-body {
-  min-height:100dvh; font-family:var(--font); font-size:var(--tx-base);
-  color:var(--text); background:var(--bg); overflow:hidden;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:none;text-size-adjust:none;}
+body{
+  min-height:100dvh;font-family:var(--font);font-size:var(--tx-base);
+  color:var(--text);background:var(--bg);overflow:hidden;
   -webkit-font-smoothing:antialiased;
 }
-img,video,canvas { display:block; max-width:100%; }
-button { cursor:pointer; background:none; border:none; font:inherit; color:inherit; }
-button:active { transform:scale(.97); }
-a { color:var(--primary); }
+img,video,canvas{display:block;max-width:100%;}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
+button:active{transform:scale(.97);}
 
-.screen { display:none; min-height:100dvh; flex-direction:column; }
-.screen.active { display:flex; }
+.screen{display:none;min-height:100dvh;flex-direction:column;}
+.screen.active{display:flex;}
 
 /* CONNECT */
-#connect {
-  align-items:center; justify-content:center;
-  padding:var(--sp8) var(--sp6); gap:var(--sp6);
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(79,157,168,.15) 0%, transparent 60%), var(--bg);
+#connect{
+  align-items:center;justify-content:center;
+  padding:var(--sp8) var(--sp6);gap:var(--sp6);
+  background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(139,92,246,.18) 0%,transparent 60%),var(--bg);
 }
-.connect-card {
-  width:100%; max-width:360px;
-  display:flex; flex-direction:column; align-items:center; gap:var(--sp5);
+.connect-card{
+  width:100%;max-width:360px;
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp5);
 }
-.connect-icon {
-  width:88px; height:88px; border-radius:28px;
-  background:linear-gradient(135deg,var(--primary) 0%,#217a87 100%);
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 20px 60px rgba(79,157,168,.3);
+.connect-icon{
+  width:88px;height:88px;border-radius:28px;
+  background:linear-gradient(135deg,var(--primary) 0%,#6d28d9 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 20px 60px rgba(139,92,246,.35);
 }
-.perm-list {
-  width:100%; background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-lg); overflow:hidden;
+.perm-list{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);overflow:hidden;
 }
-.perm-item {
-  display:flex; align-items:center; gap:var(--sp3);
-  padding:14px var(--sp4); border-bottom:1px solid var(--border); font-size:var(--tx-sm);
+.perm-item{
+  display:flex;align-items:center;gap:var(--sp3);
+  padding:14px var(--sp4);border-bottom:1px solid var(--border);font-size:var(--tx-sm);
 }
-.perm-item:last-child { border-bottom:none; }
-.perm-ic {
-  width:34px; height:34px; border-radius:var(--r-sm); flex-shrink:0;
-  background:rgba(79,157,168,.12); color:var(--primary);
-  display:flex; align-items:center; justify-content:center;
+.perm-item:last-child{border-bottom:none;}
+.perm-ic{
+  width:34px;height:34px;border-radius:var(--r-sm);flex-shrink:0;
+  background:rgba(139,92,246,.12);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;
 }
-.perm-name { font-weight:600; font-size:13px; }
-.perm-desc { font-size:12px; color:var(--muted); }
+.perm-name{font-weight:600;font-size:13px;}
+.perm-desc{font-size:12px;color:var(--muted);}
 
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:var(--sp2);
-  padding:14px var(--sp6); border-radius:var(--r-full);
-  font-size:var(--tx-sm); font-weight:600; cursor:pointer; border:none;
-  transition:all var(--ease); text-decoration:none; font-family:var(--font);
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--sp2);
+  padding:14px var(--sp6);border-radius:var(--r-full);
+  font-size:var(--tx-sm);font-weight:600;cursor:pointer;border:none;
+  transition:all var(--ease);text-decoration:none;font-family:var(--font);
 }
-.btn-primary { background:var(--primary); color:#fff; }
-.btn-primary:hover { background:var(--primary-h); }
-.btn-ghost { background:rgba(255,255,255,.06); color:var(--text); border:1px solid var(--border); }
-.btn-ghost:hover { background:rgba(255,255,255,.1); }
-.btn-full { width:100%; }
-.btn-loading { opacity:.6; pointer-events:none; }
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-h);}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{background:rgba(255,255,255,.1);}
+.btn-full{width:100%;}
+.btn-loading{opacity:.6;pointer-events:none;}
 
 /* CAMERA */
-#camera { position:relative; background:#000; }
-#video { width:100%; height:100dvh; object-fit:cover; display:block; }
+#camera{position:relative;background:var(--bg);}
 
-.cam-top {
-  position:absolute; top:0; left:0; right:0;
-  padding:16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
-  display:flex; align-items:center; justify-content:space-between;
-  background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,transparent 100%);
+.cam-top{
+  position:absolute;top:0;left:0;right:0;
+  padding:16px 18px;padding-top:calc(16px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(to bottom,rgba(0,0,0,.5) 0%,transparent 100%);
   z-index:10;
 }
-.drive-badge {
-  display:inline-flex; align-items:center; gap:6px;
-  background:rgba(0,0,0,.5); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.12); border-radius:var(--r-full);
-  padding:5px 12px 5px 5px; font-size:13px; color:rgba(255,255,255,.9);
+.drive-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);border-radius:var(--r-full);
+  padding:5px 12px 5px 5px;font-size:13px;color:rgba(255,255,255,.9);
 }
-.badge-dot {
-  width:22px; height:22px; border-radius:50%;
-  background:var(--success); display:flex; align-items:center; justify-content:center;
+.badge-dot{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--success);display:flex;align-items:center;justify-content:center;
 }
-.cam-actions { display:flex; gap:var(--sp2); }
+.cam-actions{display:flex;gap:var(--sp2);}
 
-.cam-bottom {
-  position:absolute; bottom:0; left:0; right:0; z-index:10;
+/* Center shoot area */
+.cam-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--sp5);padding:var(--sp6);
+  background:var(--bg);
+}
+.shoot-hint{
+  font-size:15px;color:var(--muted);text-align:center;line-height:1.6;
+}
+
+.cam-bottom{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
   padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
 }
-.cam-controls {
-  display:flex; align-items:center; justify-content:space-between;
+.cam-controls{
+  display:flex;align-items:center;justify-content:space-between;
   padding:var(--sp6) var(--sp6) var(--sp4);
   background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 100%);
 }
 
-.shutter {
-  width:76px; height:76px; border-radius:50%;
-  background:rgba(255,255,255,.15); border:3px solid rgba(255,255,255,.5);
-  display:flex; align-items:center; justify-content:center;
-  transition:transform var(--ease), box-shadow var(--ease);
+.shutter{
+  width:76px;height:76px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:3px solid rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform var(--ease),box-shadow var(--ease);
   flex-shrink:0;
 }
-.shutter-inner {
-  width:58px; height:58px; border-radius:50%; background:#fff;
+.shutter-inner{
+  width:58px;height:58px;border-radius:50%;background:#fff;
   transition:transform var(--ease);
 }
-.shutter:active .shutter-inner { transform:scale(.88); }
-.shutter:active { box-shadow:0 0 0 4px rgba(255,255,255,.2); }
+.shutter:active .shutter-inner{transform:scale(.88);}
+.shutter:active{box-shadow:0 0 0 4px rgba(255,255,255,.2);}
 
-.thumb-btn {
-  width:54px; height:54px; border-radius:var(--r-md); overflow:hidden;
-  background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.18);
-  display:flex; align-items:center; justify-content:center;
+.thumb-btn{
+  width:54px;height:54px;border-radius:var(--r-md);overflow:hidden;
+  background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
-.thumb-btn img { width:100%; height:100%; object-fit:cover; }
+.thumb-btn img{width:100%;height:100%;object-fit:cover;}
 
-.photo-counter { text-align:center; }
-.counter-num { font-size:22px; font-weight:700; color:#fff; }
-.counter-lbl { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+.photo-counter{text-align:center;}
+.counter-num{font-size:22px;font-weight:700;color:#fff;}
+.counter-lbl{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
 
-.upload-toast {
-  position:absolute; top:calc(env(safe-area-inset-top,0px) + 72px);
-  left:50%; transform:translateX(-50%);
-  background:rgba(0,0,0,.72); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.1); border-radius:var(--r-full);
-  padding:8px 16px; font-size:13px; white-space:nowrap;
-  display:flex; align-items:center; gap:8px; z-index:20;
-  transition:opacity var(--ease), transform var(--ease);
+.upload-toast{
+  position:absolute;top:calc(env(safe-area-inset-top,0px) + 72px);
+  left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1);border-radius:var(--r-full);
+  padding:8px 16px;font-size:13px;white-space:nowrap;
+  display:flex;align-items:center;gap:8px;z-index:20;
+  transition:opacity var(--ease),transform var(--ease);
   pointer-events:none;
 }
-.upload-toast.hidden { opacity:0; transform:translateX(-50%) translateY(-8px); }
-.toast-dot { width:8px; height:8px; border-radius:50%; }
-.toast-dot.uploading { background:var(--primary); animation:pulse 1s ease-in-out infinite; }
-.toast-dot.done      { background:var(--success); }
-.toast-dot.error     { background:var(--error); }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+.upload-toast.hidden{opacity:0;transform:translateX(-50%) translateY(-8px);}
+.toast-dot{width:8px;height:8px;border-radius:50%;}
+.toast-dot.uploading{background:var(--primary);animation:pulse 1s ease-in-out infinite;}
+.toast-dot.done{background:var(--success);}
+.toast-dot.error{background:var(--error);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-.btn-ic {
-  width:40px; height:40px; border-radius:50%;
-  background:rgba(0,0,0,.45); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.14); color:#fff;
-  display:flex; align-items:center; justify-content:center;
+.btn-ic{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.14);color:#fff;
+  display:flex;align-items:center;justify-content:center;
 }
-.btn-ic:active { transform:scale(.9); }
-
-.cam-fallback {
-  position:absolute; inset:0;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:var(--sp4); text-align:center; padding:var(--sp6);
-  background:var(--bg);
-}
-
-.flash { position:fixed; inset:0; background:#fff; z-index:999; pointer-events:none; opacity:0; }
-.flash.go { animation:flash-go .2s ease-out forwards; }
-@keyframes flash-go { 0%{opacity:.9} 100%{opacity:0} }
+.btn-ic:active{transform:scale(.9);}
 
 /* Gallery */
-#gallery {
-  position:fixed; inset:0; background:rgba(0,0,0,.94); z-index:100;
-  display:none; flex-direction:column;
+#gallery{
+  position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:100;
+  display:none;flex-direction:column;
 }
-#gallery.open { display:flex; }
-.gal-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:16px 18px; padding-top:calc(16px + env(safe-area-inset-top,0px));
+#gallery.open{display:flex;}
+.gal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;padding-top:calc(16px + env(safe-area-inset-top,0px));
   border-bottom:1px solid var(--border);
 }
-.gal-title { font-size:17px; font-weight:700; }
-.gal-sub   { font-size:12px; color:var(--muted); margin-top:2px; }
-.gal-grid {
-  flex:1; overflow-y:auto; padding:8px;
-  display:grid; grid-template-columns:repeat(3,1fr); gap:3px; align-content:start;
+.gal-title{font-size:17px;font-weight:700;}
+.gal-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.gal-grid{
+  flex:1;overflow-y:auto;padding:8px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start;
 }
-.gal-item { aspect-ratio:1; border-radius:4px; overflow:hidden; position:relative; }
-.gal-item img { width:100%; height:100%; object-fit:cover; }
-.gal-badge {
-  position:absolute; bottom:4px; right:4px;
-  width:18px; height:18px; border-radius:50%;
-  background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center;
+.gal-item{aspect-ratio:1;border-radius:4px;overflow:hidden;position:relative;}
+.gal-item img{width:100%;height:100%;object-fit:cover;}
+.gal-video-thumb{
+  width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  background:rgba(255,255,255,.05);font-size:10px;color:var(--muted);
 }
-.gal-badge.uploading { background:rgba(79,157,168,.8); }
-.gal-badge.done  { background:rgba(95,168,60,.85); }
-.gal-badge.error { background:rgba(201,79,138,.85); }
+.gal-badge{
+  position:absolute;bottom:4px;right:4px;
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;
+}
+.gal-badge.uploading{background:rgba(139,92,246,.8);}
+.gal-badge.done{background:rgba(95,168,60,.85);}
+.gal-badge.error{background:rgba(201,79,138,.85);}
 
 /* QR modal */
-#qr-modal {
-  position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:200;
-  display:none; align-items:center; justify-content:center; padding:var(--sp4);
+#qr-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:var(--sp4);
 }
-#qr-modal.open { display:flex; }
-.qr-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--r-xl); padding:var(--sp8);
-  display:flex; flex-direction:column; align-items:center; gap:var(--sp4);
-  max-width:300px; width:100%; text-align:center;
+#qr-modal.open{display:flex;}
+.qr-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:var(--sp8);
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp4);
+  max-width:300px;width:100%;text-align:center;
 }
-.qr-card h3 { font-size:17px; font-weight:700; }
-.qr-card p  { font-size:13px; color:var(--muted); line-height:1.5; }
-#qr-canvas  { border-radius:var(--r-md); background:#fff; padding:10px; }
-.qr-url     { font-size:11px; color:var(--faint); word-break:break-all; }
-.spinner {
-  width:18px; height:18px; border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff; border-radius:50%;
+.qr-card h3{font-size:17px;font-weight:700;}
+.qr-card p{font-size:13px;color:var(--muted);line-height:1.5;}
+#qr-canvas{border-radius:var(--r-md);background:#fff;padding:10px;}
+.qr-url{font-size:11px;color:var(--faint);word-break:break-all;}
+.spinner{
+  width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
   animation:spin .7s linear infinite;
 }
-@keyframes spin { to { transform:rotate(360deg) } }
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-
-<div class="flash" id="flash"></div>
 
 <!-- CONNECT -->
 <div class="screen active" id="connect">
@@ -269,7 +257,7 @@ a { color:var(--primary); }
     <div style="text-align:center;">
       <h1 style="font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px;">PhotoDrive</h1>
       <p style="font-size:15px;color:var(--muted);line-height:1.6;">
-        Общая папка в Google Drive<br>Снимайте – файлы прилетят сразу туда
+        Общая папка в Google Drive<br>Снимайте — файлы прилетят сразу туда
       </p>
     </div>
 
@@ -324,21 +312,7 @@ a { color:var(--primary); }
 
 <!-- CAMERA -->
 <div class="screen" id="camera">
-  <video id="video" autoplay playsinline muted></video>
   <input type="file" id="file-input" accept="image/*,video/*" capture="environment" style="display:none">
-
-  <div class="cam-fallback" id="cam-fallback" style="display:none;">
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5">
-      <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-    <p style="color:var(--muted);font-size:15px;text-align:center;line-height:1.6;">
-      Прямой доступ к камере недоступен.<br>Нажмите кнопку, чтобы выбрать фото/видео.
-    </p>
-    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
-      📷 Загрузить файл
-    </button>
-  </div>
 
   <div class="cam-top">
     <div class="drive-badge">
@@ -357,19 +331,27 @@ a { color:var(--primary); }
           <path d="M14 14h3v3M20 14v3M14 20h6"/>
         </svg>
       </button>
-      <button class="btn-ic" id="btn-flip" onclick="flipCamera()" title="Перевернуть камеру">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M20 7h-9M14 17H5M17 4l3 3-3 3M7 14l-3 3 3 3"/>
-        </svg>
-      </button>
     </div>
   </div>
 
+  <!-- Toast -->
   <div class="upload-toast hidden" id="toast">
     <div class="toast-dot" id="toast-dot"></div>
     <span id="toast-text"></span>
   </div>
 
+  <!-- Center: hint + big shoot button -->
+  <div class="cam-center" id="cam-center">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.3">
+        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <p class="shoot-hint">Нажмите кнопку ниже,<br>чтобы открыть камеру</p>
+    </div>
+  </div>
+
+  <!-- Bottom controls -->
   <div class="cam-bottom">
     <div class="cam-controls">
       <button class="thumb-btn" id="thumb-btn" onclick="openGallery()" aria-label="Галерея">
@@ -379,7 +361,7 @@ a { color:var(--primary); }
         </svg>
       </button>
 
-      <button class="shutter" onclick="shoot()" id="shutter" aria-label="Сделать фото/видео">
+      <button class="shutter" onclick="shoot()" aria-label="Открыть камеру">
         <div class="shutter-inner"></div>
       </button>
 
@@ -420,15 +402,12 @@ a { color:var(--primary); }
 
 <script>
 // === STATE ===
-let S = {
+const S = {
   clientId: '45105908572-41v93at9tdjo7t8io1eee7592kvrnk04.apps.googleusercontent.com',
   folderId: '1w88GP3nE81I_YiJaZeimlD4qnBHq93Th',
   token: null,
   tokenClient: null,
   photos: [],
-  stream: null,
-  facing: 'environment',
-  useFileInput: false,
 };
 
 function show(id) {
@@ -437,13 +416,13 @@ function show(id) {
 }
 
 function openFolder() {
-  window.open('https://drive.google.com/drive/folders/1w88GP3nE81I_YiJaZeimlD4qnBHq93Th', '_blank');
+  window.open('https://drive.google.com/drive/folders/' + S.folderId, '_blank');
 }
 
 // --- OAuth ---
 function connectDrive() {
   const btn = document.getElementById('btn-connect');
-  if (!window.google || !google.accounts || !google.accounts.oauth2) {
+  if (!window.google?.accounts?.oauth2) {
     alert('Библиотека Google не загрузилась. Проверьте соединение.');
     return;
   }
@@ -456,21 +435,18 @@ function connectDrive() {
     scope: 'https://www.googleapis.com/auth/drive.file',
     callback: async (resp) => {
       btn.classList.remove('btn-loading');
-      btn.innerHTML = 'Подключить Google Диск';
+      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg> Подключить Google Диск';
 
-      if (resp.error) {
-        alert('Ошибка: ' + resp.error);
-        return;
-      }
+      if (resp.error) { alert('Ошибка: ' + resp.error); return; }
 
       S.token = resp.access_token;
 
-      try {
-        await startCamera();
-        show('camera');
-      } catch (e) {
-        alert('Ошибка подключения: ' + e.message);
-      }
+      // Вешаем обработчик на input и переходим на экран камеры
+      const input = document.getElementById('file-input');
+      input.removeEventListener('change', onFileSelected);
+      input.addEventListener('change', onFileSelected);
+
+      show('camera');
     }
   });
 
@@ -480,15 +456,13 @@ function connectDrive() {
 function refreshToken() {
   return new Promise((resolve, reject) => {
     if (!S.tokenClient) return reject(new Error('No token client'));
-
-    const original = S.tokenClient.callback;
+    const orig = S.tokenClient.callback;
     S.tokenClient.callback = (resp) => {
-      S.tokenClient.callback = original;
+      S.tokenClient.callback = orig;
       if (resp.error) return reject(new Error(resp.error));
       S.token = resp.access_token;
-      resolve(resp.access_token);
+      resolve();
     };
-
     S.tokenClient.requestAccessToken({ prompt: '' });
   });
 }
@@ -505,53 +479,34 @@ async function apiFetch(url, opts = {}) {
   return r.json();
 }
 
-// --- Upload to common folder ---
-async function uploadPhoto(blob, filename) {
+// --- Upload ---
+async function uploadFile(file, filename) {
   const meta = { name: filename, parents: [S.folderId] };
   const form = new FormData();
   form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
-  form.append('file', blob, filename);
-
+  form.append('file', file, filename);
   return apiFetch(
     'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
     { method: 'POST', body: form }
   );
 }
 
-// --- Camera: always native file input ---
-async function startCamera() {
-  const video = document.getElementById('video');
-
-  S.useFileInput = true;
-  video.style.display = 'none';
-  document.getElementById('cam-fallback').style.display = 'flex';
-  document.getElementById('shutter').style.display = 'none';
-  document.getElementById('btn-flip').style.display = 'none';
-
-  const input = document.getElementById('file-input');
-  input.removeEventListener('change', onFileSelected);
-  input.addEventListener('change', onFileSelected);
-}
-
-// flipCamera остаётся, но фактически не используется
-async function flipCamera() {}
-
+// --- Shoot: open native camera/gallery ---
 function shoot() {
   document.getElementById('file-input').click();
 }
 
+// --- File selected ---
 function onFileSelected(e) {
   const file = e.target.files[0];
   if (!file) return;
-  processCapture(file);
   e.target.value = '';
+  processFile(file);
 }
 
-// --- Processing & upload (photo + video) ---
-async function processCapture(file) {
-  const mime = file.type || '';
-  const isVideo = mime.startsWith('video');
-
+// --- Process & upload ---
+async function processFile(file) {
+  const isVideo = file.type.startsWith('video');
   const idx = S.photos.length;
   let dataUrl = null;
 
@@ -559,24 +514,25 @@ async function processCapture(file) {
     dataUrl = await blobToDataUrl(file);
   }
 
-  S.photos.push({ dataUrl, status: 'uploading', mime });
-
+  S.photos.push({ dataUrl, status: 'uploading', isVideo });
   updateCounter();
   if (dataUrl) updateThumb(dataUrl);
   addGalleryItem(idx);
   setToast('uploading', 'Загрузка в общую папку...');
 
-  const ext = isVideo ? 'mp4' : 'jpg';
+  const ext = isVideo
+    ? (file.name.split('.').pop() || 'mp4')
+    : 'jpg';
   const filename = `media_${new Date().toISOString().replace(/[:.]/g, '-')}.${ext}`;
 
   try {
-    await uploadPhoto(file, filename);
+    await uploadFile(file, filename);
     S.photos[idx].status = 'done';
     updateGalleryBadge(idx, 'done');
     setToast('done', '✓ Сохранено в общей папке');
     setTimeout(hideToast, 2800);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     S.photos[idx].status = 'error';
     updateGalleryBadge(idx, 'error');
     setToast('error', 'Ошибка загрузки');
@@ -592,21 +548,20 @@ function blobToDataUrl(blob) {
   });
 }
 
-// --- UI helpers ---
+// --- UI ---
 function updateCounter() {
   document.getElementById('counter-num').textContent = S.photos.length;
 }
 
 function updateThumb(dataUrl) {
-  const btn = document.getElementById('thumb-btn');
-  btn.innerHTML = `<img src="${dataUrl}" alt="последний файл">`;
+  document.getElementById('thumb-btn').innerHTML =
+    `<img src="${dataUrl}" alt="превью">`;
 }
 
 function setToast(state, text) {
   const toast = document.getElementById('toast');
-  const dot   = document.getElementById('toast-dot');
   document.getElementById('toast-text').textContent = text;
-  dot.className = 'toast-dot ' + state;
+  document.getElementById('toast-dot').className = 'toast-dot ' + state;
   toast.classList.remove('hidden');
 }
 function hideToast() {
@@ -614,32 +569,35 @@ function hideToast() {
 }
 
 function addGalleryItem(idx) {
-  const grid = document.getElementById('gal-grid');
   const item = document.createElement('div');
   item.className = 'gal-item';
   item.id = `gi-${idx}`;
+
   const preview = S.photos[idx].dataUrl
-    ? `<img src="${S.photos[idx].dataUrl}" alt="файл ${idx+1}" loading="lazy">`
-    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);background:rgba(255,255,255,.05);">Видео</div>`;
-  item.innerHTML = `
-    ${preview}
+    ? `<img src="${S.photos[idx].dataUrl}" alt="фото" loading="lazy">`
+    : `<div class="gal-video-thumb">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Видео
+      </div>`;
+
+  item.innerHTML = `${preview}
     <div class="gal-badge uploading" id="gb-${idx}">
       <div class="spinner" style="width:10px;height:10px;border-width:1.5px;"></div>
     </div>`;
-  grid.prepend(item);
+
+  document.getElementById('gal-grid').prepend(item);
   document.getElementById('gal-sub').textContent = S.photos.length + ' файлов';
-  document.getElementById('gal-title').textContent = 'PhotoDrive';
 }
 
 function updateGalleryBadge(idx, state) {
-  const badge = document.getElementById(`gb-${idx}`);
-  if (!badge) return;
-  badge.className = 'gal-badge ' + state;
-  if (state === 'done') {
-    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`;
-  } else {
-    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-  }
+  const b = document.getElementById(`gb-${idx}`);
+  if (!b) return;
+  b.className = 'gal-badge ' + state;
+  b.innerHTML = state === 'done'
+    ? `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`
+    : `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
 }
 
 function openGallery()  { document.getElementById('gallery').classList.add('open'); }
@@ -647,15 +605,12 @@ function closeGallery() { document.getElementById('gallery').classList.remove('o
 
 // --- QR ---
 function showQR() {
-  const modal = document.getElementById('qr-modal');
-  modal.classList.add('open');
-  const url = window.location.href.split('#')[0];
+  document.getElementById('qr-modal').classList.add('open');
+  const url = location.href.split('#')[0];
   document.getElementById('qr-url').textContent = url;
   QRCode.toCanvas(document.getElementById('qr-canvas'), url, {
-    width: 200,
-    color: { dark: '#000', light: '#fff' },
-    errorCorrectionLevel: 'H'
-  }, err => { if (err) console.error(err); });
+    width: 200, color: { dark: '#000', light: '#fff' }, errorCorrectionLevel: 'H'
+  });
 }
 function closeQR() { document.getElementById('qr-modal').classList.remove('open'); }
 document.getElementById('qr-modal').addEventListener('click', e => {
